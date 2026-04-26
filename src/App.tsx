@@ -60,6 +60,7 @@ export default function App() {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -195,7 +196,6 @@ export default function App() {
     }
   };
 
-  const [showLogin, setShowLogin] = useState(false);
 
   if (!isAuthenticated) {
     if (showLogin) {
