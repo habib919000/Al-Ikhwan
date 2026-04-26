@@ -22,6 +22,7 @@ import { EventManagement } from './pages/EventManagement';
 import { CommunicationCenter } from './pages/CommunicationCenter';
 import { SettingsPage } from './pages/SettingsPage';
 import { MemberDashboard } from './pages/MemberDashboard';
+import { LandingPage } from './pages/LandingPage';
 
 // Types & Lib
 import { User, Member, DashboardStats, Event as EventType, Transaction } from './types';
