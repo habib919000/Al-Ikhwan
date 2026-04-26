@@ -195,11 +195,21 @@ export default function App() {
     }
   };
 
+  const [showLogin, setShowLogin] = useState(false);
+
   if (!isAuthenticated) {
-    return <Login onLogin={(userData) => {
-      setCurrentUser(userData);
-      setIsAuthenticated(true);
-    }} />;
+    if (showLogin) {
+      return (
+        <Login 
+          onLogin={(userData) => {
+            setCurrentUser(userData);
+            setIsAuthenticated(true);
+          }} 
+          onBack={() => setShowLogin(false)}
+        />
+      );
+    }
+    return <LandingPage onLoginClick={() => setShowLogin(true)} />;
   }
 
   return (
