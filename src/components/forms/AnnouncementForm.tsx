@@ -40,7 +40,7 @@ export function AnnouncementForm({ onSuccess }: AnnouncementFormProps) {
           type="text" 
           value={formData.title}
           onChange={e => setFormData({ ...formData, title: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="e.g. Water Supply Update"
         />
       </div>
@@ -49,7 +49,7 @@ export function AnnouncementForm({ onSuccess }: AnnouncementFormProps) {
         <select 
           value={formData.type}
           onChange={e => setFormData({ ...formData, type: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="all">All Members</option>
           <option value="committee">Committee Members Only</option>
@@ -62,7 +62,7 @@ export function AnnouncementForm({ onSuccess }: AnnouncementFormProps) {
           required
           value={formData.message}
           onChange={e => setFormData({ ...formData, message: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           rows={4}
           placeholder="Type your announcement here..."
         />
@@ -70,7 +70,7 @@ export function AnnouncementForm({ onSuccess }: AnnouncementFormProps) {
       <button 
         disabled={submitting}
         type="submit" 
-        className="w-full py-3 bg-emerald-600 text-white rounded-lg font-bold text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
       >
         {submitting ? 'Sending...' : 'Send Announcement'}
       </button>

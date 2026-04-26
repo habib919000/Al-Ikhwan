@@ -15,7 +15,7 @@ export function EventManagement({ events, onAddEvent }: EventManagementProps) {
         <h3 className="text-xl font-bold">Events & Community</h3>
         <button 
           onClick={onAddEvent} 
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
         >
           <Plus size={16} /> New Event
         </button>

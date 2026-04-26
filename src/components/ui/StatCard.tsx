@@ -16,7 +16,7 @@ export function StatCard({ title, value, icon, trend, trendUp }: StatCardProps) 
       <div className="flex items-center justify-between mb-4">
         <div className="p-2 bg-gray-50 rounded-lg">{icon}</div>
         {trendUp !== undefined && (
-          <div className={cn("flex items-center text-xs font-medium", trendUp ? "text-emerald-600" : "text-red-600")}>
+          <div className={cn("flex items-center text-xs font-medium", trendUp ? "text-indigo-600" : "text-red-600")}>
             {trendUp ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
             {trendUp ? "8.2%" : "4.1%"}
           </div>

@@ -24,7 +24,7 @@ export function CommunicationCenter({ announcements, onSendAnnouncement }: Commu
           <h4 className="font-bold">Messages</h4>
           <button 
             onClick={onSendAnnouncement} 
-            className="p-1 hover:bg-gray-100 rounded text-emerald-600 transition-colors"
+            className="p-1 hover:bg-gray-100 rounded text-indigo-600 transition-colors"
           >
             <Plus size={18} />
           </button>
@@ -40,7 +40,7 @@ export function CommunicationCenter({ announcements, onSendAnnouncement }: Commu
                 className={cn(
                   "p-4 cursor-pointer border-l-4 transition-colors",
                   selectedAnnouncement?.id === ann.id 
-                    ? "bg-emerald-50/50 border-emerald-500" 
+                    ? "bg-indigo-50/50 border-indigo-500" 
                     : "hover:bg-gray-50 border-transparent"
                 )}
               >
@@ -55,7 +55,7 @@ export function CommunicationCenter({ announcements, onSendAnnouncement }: Commu
       <div className="flex-1 flex flex-col h-2/3 md:h-full">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h4 className="font-bold">{selectedAnnouncement?.title || 'Select an announcement'}</h4>
-          <button onClick={onSendAnnouncement} className="text-xs font-bold text-emerald-600 hover:underline">New Broadcast</button>
+          <button onClick={onSendAnnouncement} className="text-xs font-bold text-indigo-600 hover:underline">New Broadcast</button>
         </div>
         <div className="flex-1 p-6 space-y-6 overflow-y-auto">
           {selectedAnnouncement ? (
@@ -77,9 +77,9 @@ export function CommunicationCenter({ announcements, onSendAnnouncement }: Commu
             <input 
               type="text" 
               placeholder="Type a message..." 
-              className="flex-1 bg-gray-100 border-none rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none" 
+              className="flex-1 bg-gray-100 border-none rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" 
             />
-            <button className="bg-emerald-600 text-white p-2 rounded-lg hover:bg-emerald-700 transition-colors">
+            <button className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 transition-colors">
               <ChevronRight size={20} />
             </button>
           </div>

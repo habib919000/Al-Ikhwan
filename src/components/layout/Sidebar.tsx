@@ -26,13 +26,13 @@ function NavItem({ icon, label, active, onClick }: NavItemProps) {
       className={cn(
         "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
         active 
-          ? "bg-emerald-500/10 text-emerald-400" 
+          ? "bg-indigo-500/10 text-indigo-400" 
           : "text-gray-400 hover:text-white hover:bg-white/5"
       )}
     >
       {icon}
       <span>{label}</span>
-      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400" />}
     </button>
   );
 }
@@ -66,7 +66,7 @@ export function Sidebar({
     )}>
       <div className="p-6 flex items-center justify-between lg:justify-start gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center font-bold text-white">AI</div>
+          <div className="w-8 h-8 bg-indigo-500 rounded flex items-center justify-center font-bold text-white">AI</div>
           <h1 className="text-xl font-bold tracking-tight">Al-Ikhwan</h1>
         </div>
         <button onClick={() => setIsOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
@@ -120,7 +120,7 @@ export function Sidebar({
 
       <div className="p-4 border-t border-[#2D2E32]">
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold">
+          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold">
             {(user.name || user.email || 'A').charAt(0)}
           </div>
           <div className="flex-1 overflow-hidden">

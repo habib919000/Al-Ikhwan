@@ -53,7 +53,7 @@ export function Dashboard({
         <StatCard 
           title="Monthly Collection" 
           value={formatCurrency(stats.monthlyCollection)} 
-          icon={<Wallet className="text-emerald-500" />} 
+          icon={<Wallet className="text-indigo-500" />} 
           trend="+8.2% vs last month" 
           trendUp 
         />
@@ -87,8 +87,8 @@ export function Dashboard({
               <AreaChart data={stats.chartData}>
                 <defs>
                   <linearGradient id="colorCollection" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
@@ -98,7 +98,7 @@ export function Dashboard({
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                   formatter={(v: number) => [formatCurrency(v), '']}
                 />
-                <Area type="monotone" dataKey="collection" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorCollection)" />
+                <Area type="monotone" dataKey="collection" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#colorCollection)" />
                 <Area type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} fill="transparent" strokeDasharray="5 5" />
               </AreaChart>
             </ResponsiveContainer>
@@ -109,7 +109,7 @@ export function Dashboard({
           <h3 className="text-base font-bold mb-6">Quick Actions</h3>
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
             <ActionButton onClick={onAddMember} icon={<Plus size={18} />} label="Add Member" color="bg-blue-50 text-blue-600" />
-            <ActionButton onClick={onRecordPayment} icon={<Wallet size={18} />} label="Payment" color="bg-emerald-50 text-emerald-600" />
+            <ActionButton onClick={onRecordPayment} icon={<Wallet size={18} />} label="Payment" color="bg-indigo-50 text-indigo-600" />
             <ActionButton onClick={onScheduleEvent} icon={<Calendar size={18} />} label="Event" color="bg-purple-50 text-purple-600" />
             <ActionButton onClick={onSendAnnouncement} icon={<MessageSquare size={18} />} label="Broadcast" color="bg-amber-50 text-amber-600" />
           </div>

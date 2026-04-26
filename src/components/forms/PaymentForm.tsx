@@ -39,7 +39,7 @@ export function PaymentForm({ members, onSuccess }: PaymentFormProps) {
           required
           value={formData.memberId}
           onChange={e => setFormData({ ...formData, memberId: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="">Choose a member...</option>
           {members.map(m => (
@@ -54,7 +54,7 @@ export function PaymentForm({ members, onSuccess }: PaymentFormProps) {
           type="number" 
           value={formData.amount}
           onChange={e => setFormData({ ...formData, amount: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="500"
         />
       </div>
@@ -63,7 +63,7 @@ export function PaymentForm({ members, onSuccess }: PaymentFormProps) {
         <select 
           value={formData.method}
           onChange={e => setFormData({ ...formData, method: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="cash">Cash</option>
           <option value="bank_transfer">Bank Transfer</option>
@@ -73,7 +73,7 @@ export function PaymentForm({ members, onSuccess }: PaymentFormProps) {
       <button 
         disabled={submitting}
         type="submit" 
-        className="w-full py-3 bg-emerald-600 text-white rounded-lg font-bold text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
       >
         {submitting ? 'Recording...' : 'Record Payment'}
       </button>

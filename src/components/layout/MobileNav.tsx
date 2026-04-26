@@ -20,7 +20,7 @@ function MobileNavItem({ icon, active, onClick }: MobileNavItemProps) {
       onClick={onClick}
       className={cn(
         "p-2 rounded-xl transition-all duration-200",
-        active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200 scale-110" : "text-gray-400 hover:text-gray-600"
+        active ? "bg-indigo-500 text-white shadow-lg shadow-indigo-200 scale-110" : "text-gray-400 hover:text-gray-600"
       )}
     >
       {icon}
@@ -51,7 +51,7 @@ export function MobileNav({ activeTab, setActiveTab, onAddPayment }: MobileNavPr
       <div className="relative -top-6">
         <button 
           onClick={onAddPayment}
-          className="w-12 h-12 bg-emerald-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-emerald-700 transition-transform active:scale-90"
+          className="w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition-transform active:scale-90"
         >
           <Plus size={24} />
         </button>

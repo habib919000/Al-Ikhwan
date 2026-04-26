@@ -131,7 +131,7 @@ export function MemberManagement({
             <Download size={16} /> Export
           </button>
           {isAdmin && (
-            <button onClick={onAddMember} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700">
+            <button onClick={onAddMember} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
               <Plus size={16} /> Add Member
             </button>
           )}
@@ -145,7 +145,7 @@ export function MemberManagement({
               <Filter size={14} /> Filter
             </button>
             <div className="hidden sm:block h-8 w-px bg-gray-200 mx-1" />
-            <button className="px-3 py-1.5 text-emerald-600 text-xs font-bold border-b-2 border-emerald-600">All</button>
+            <button className="px-3 py-1.5 text-indigo-600 text-xs font-bold border-b-2 border-indigo-600">All</button>
             <button className="px-3 py-1.5 text-gray-500 text-xs font-semibold hover:text-gray-900">Active</button>
             <button className="px-3 py-1.5 text-gray-500 text-xs font-semibold hover:text-gray-900">Pending</button>
           </div>
@@ -170,26 +170,26 @@ export function MemberManagement({
                 <td className="px-6 py-4">
                   <button 
                     onClick={() => onViewProfile(member.id)}
-                    className="flex items-center gap-3 hover:text-emerald-600 transition-colors text-left group/name"
+                    className="flex items-center gap-3 hover:text-indigo-600 transition-colors text-left group/name"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 group-hover/name:bg-emerald-100 group-hover/name:text-emerald-700 transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 group-hover/name:bg-indigo-100 group-hover/name:text-indigo-700 transition-colors">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <span className="text-sm font-semibold group-hover/name:underline decoration-emerald-500/30 underline-offset-4">{member.name}</span>
+                    <span className="text-sm font-semibold group-hover/name:underline decoration-indigo-500/30 underline-offset-4">{member.name}</span>
                   </button>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500 font-mono">{member.membershipId}</td>
                 <td className="px-6 py-4">
                   <span className={cn(
                     "px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                    member.status === 'active' ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"
+                    member.status === 'active' ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-600"
                   )}>
                     {member.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">{member.phone}</td>
                 <td className="px-6 py-4">
-                  <span className={cn("text-sm font-bold", member.dues > 0 ? "text-red-600" : "text-emerald-600")}>
+                  <span className={cn("text-sm font-bold", member.dues > 0 ? "text-red-600" : "text-indigo-600")}>
                     {formatCurrency(member.dues)}
                   </span>
                 </td>
@@ -197,7 +197,7 @@ export function MemberManagement({
                   <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={() => onViewProfile(member.id)}
-                      className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                      className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                       title="View Profile"
                     >
                       <Eye size={16} />
@@ -231,7 +231,7 @@ export function MemberManagement({
                                 onClick={() => handleToggleStatus(member)}
                                 className={cn(
                                   "w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors",
-                                  member.status === 'active' ? "text-amber-600 hover:bg-amber-50" : "text-emerald-600 hover:bg-emerald-50"
+                                  member.status === 'active' ? "text-amber-600 hover:bg-amber-50" : "text-indigo-600 hover:bg-indigo-50"
                                 )}
                               >
                                 {member.status === 'active' ? <AlertCircle size={14} /> : <CheckCircle2 size={14} />}
@@ -295,7 +295,7 @@ export function MemberManagement({
                   required
                   value={editForm.name}
                   onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -306,7 +306,7 @@ export function MemberManagement({
                     required
                     value={editForm.phone}
                     onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -315,7 +315,7 @@ export function MemberManagement({
                     type="email" 
                     value={editForm.email}
                     onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -325,7 +325,7 @@ export function MemberManagement({
                   <select 
                     value={editForm.bloodGroup}
                     onChange={(e) => setEditForm({...editForm, bloodGroup: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   >
                     <option value="">Select Blood Group</option>
                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
@@ -340,7 +340,7 @@ export function MemberManagement({
                     required
                     value={editForm.membershipId}
                     onChange={(e) => setEditForm({...editForm, membershipId: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -350,7 +350,7 @@ export function MemberManagement({
                     required
                     value={editForm.joinedDate}
                     onChange={(e) => setEditForm({...editForm, joinedDate: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -360,7 +360,7 @@ export function MemberManagement({
                   required
                   value={editForm.address}
                   onChange={(e) => setEditForm({...editForm, address: e.target.value})}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   rows={2}
                 />
               </div>
@@ -370,7 +370,7 @@ export function MemberManagement({
                   <select 
                     value={editForm.status}
                     onChange={(e) => setEditForm({...editForm, status: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -383,7 +383,7 @@ export function MemberManagement({
                     required
                     value={editForm.dues}
                     onChange={(e) => setEditForm({...editForm, dues: Number(e.target.value)})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -397,7 +397,7 @@ export function MemberManagement({
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95"
+                  className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
                 >
                   Save Changes
                 </button>

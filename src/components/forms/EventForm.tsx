@@ -39,7 +39,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
           type="text" 
           value={formData.title}
           onChange={e => setFormData({ ...formData, title: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="e.g. Eid Gathering"
         />
       </div>
@@ -51,7 +51,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
             type="date" 
             value={formData.date}
             onChange={e => setFormData({ ...formData, date: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           />
         </div>
         <div className="space-y-1">
@@ -61,7 +61,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
             type="text" 
             value={formData.location}
             onChange={e => setFormData({ ...formData, location: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             placeholder="Hall A"
           />
         </div>
@@ -71,7 +71,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
         <textarea 
           value={formData.description}
           onChange={e => setFormData({ ...formData, description: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           rows={2}
           placeholder="Brief details about the event..."
         />
@@ -79,7 +79,7 @@ export function EventForm({ onSuccess }: EventFormProps) {
       <button 
         disabled={submitting}
         type="submit" 
-        className="w-full py-3 bg-emerald-600 text-white rounded-lg font-bold text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
       >
         {submitting ? 'Scheduling...' : 'Schedule Event'}
       </button>

@@ -14,6 +14,12 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // Automatically set Content-Type for JSON bodies
+  if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(options.body);
+  }
+
   const response = await nativeFetch(url, {
     ...options,
     headers

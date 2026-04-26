@@ -40,7 +40,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           type="text" 
           value={formData.name}
           onChange={e => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="e.g. Security Guard Salary"
         />
       </div>
@@ -52,7 +52,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
             type="number" 
             value={formData.amount}
             onChange={e => setFormData({ ...formData, amount: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             placeholder="15000"
           />
         </div>
@@ -61,7 +61,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           <select 
             value={formData.category}
             onChange={e => setFormData({ ...formData, category: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           >
             <option value="Maintenance">Maintenance</option>
             <option value="Security">Security</option>
@@ -80,7 +80,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
             type="date" 
             value={formData.date}
             onChange={e => setFormData({ ...formData, date: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           />
         </div>
         <div className="space-y-1">
@@ -88,7 +88,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           <select 
             value={formData.method}
             onChange={e => setFormData({ ...formData, method: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           >
             <option value="cash">Cash</option>
             <option value="bank_transfer">Bank Transfer</option>

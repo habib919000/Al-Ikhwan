@@ -1,6 +1,7 @@
 import React from 'react';
 
 interface ActivityItemProps {
+  key?: string;
   title: string;
   desc: string;
   time: string;
@@ -9,7 +10,7 @@ interface ActivityItemProps {
 export function ActivityItem({ title, desc, time }: ActivityItemProps) {
   return (
     <div className="flex gap-3">
-      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5" />
+      <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5" />
       <div>
         <p className="text-xs font-bold">{title}</p>
         <p className="text-[11px] text-gray-500">{desc}</p>

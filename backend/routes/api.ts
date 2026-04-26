@@ -34,7 +34,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter: fileFilter as any });
 
 // --- Auth Info ---
 apiRouter.get('/me', async (req: AuthRequest, res: Response) => {
@@ -45,11 +45,11 @@ apiRouter.get('/me', async (req: AuthRequest, res: Response) => {
       return res.json({ role: 'admin', user: req.user });
     }
 
-    const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM members WHERE id = ?', [req.user.id]);
+    const [rows] = await pool.query<RowDataPacket[]>('SELECT id, name, membershipId, status, phone, email, dues, joinedDate FROM members WHERE id = ?', [req.user.id]);
     if (rows.length === 0) return res.status(404).json({ error: 'Member not found' });
 
     const [transactions] = await pool.query<RowDataPacket[]>('SELECT * FROM transactions WHERE memberId = ? ORDER BY date DESC', [req.user.id]);
-    const [files] = await pool.query<RowDataPacket[]>('SELECT * FROM files WHERE memberId = ? ORDER BY uploadDate DESC', [req.user.id]);
+    const [files] = await pool.query<RowDataPacket[]>('SELECT id, name, type, size, uploadDate FROM files WHERE memberId = ? ORDER BY uploadDate DESC', [req.user.id]);
 
     res.json({ 
       role: 'member', 
@@ -63,6 +63,14 @@ apiRouter.get('/me', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// Admin access check helper
+const isAdmin = (req: AuthRequest, res: Response, next: () => void) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Admin access only' });
+  }
+  next();
+};
+
 // Generic pagination helper
 function getPagination(req: AuthRequest) {
   const page = parseInt(req.query.page as string) || 1;
@@ -72,46 +80,40 @@ function getPagination(req: AuthRequest) {
 }
 
 // --- Stats API ---
-apiRouter.get('/stats', async (req: AuthRequest, res: Response) => {
-  if (req.user?.role !== 'admin') {
-    return res.status(403).json({ error: 'Forbidden: Admin access only' });
-  }
+apiRouter.get('/stats', isAdmin as any, async (req: AuthRequest, res: Response) => {
   try {
-    const [members] = await pool.query<RowDataPacket[]>('SELECT * FROM members');
-    const [transactions] = await pool.query<RowDataPacket[]>('SELECT * FROM transactions');
-    const [events] = await pool.query<RowDataPacket[]>('SELECT * FROM events');
-    const [announcements] = await pool.query<RowDataPacket[]>('SELECT * FROM announcements ORDER BY date DESC LIMIT 5');
-
-    const totalMembers = members.length;
-    const activeMembers = members.filter(m => m.status === 'active').length;
-    const pendingDues = members.reduce((acc, m) => acc + Number(m.dues), 0);
-    
-    const currentMonth = new Date().getMonth();
+    const currentMonth = new Date().getMonth() + 1; // MySQL months are 1-based in some contexts but we'll use string formatting
     const currentYear = new Date().getFullYear();
-    
-    const monthlyCollection = transactions
-      .filter(t => {
-        const d = new Date(t.date);
-        return Number(t.amount) > 0 && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      })
-      .reduce((acc, t) => acc + Number(t.amount), 0);
+    const currentMonthStr = `${currentYear}-${currentMonth.toString().padStart(2, '0')}%`;
 
-    const recentExpenses = Math.abs(transactions
-      .filter(t => {
-        const d = new Date(t.date);
-        return Number(t.amount) < 0 && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      })
-      .reduce((acc, t) => acc + Number(t.amount), 0));
+    // Using SQL aggregations for performance
+    const [statsRows] = await pool.query<RowDataPacket[]>(`
+      SELECT 
+        (SELECT COUNT(*) FROM members) as totalMembers,
+        (SELECT COUNT(*) FROM members WHERE status = 'active') as activeMembers,
+        (SELECT SUM(dues) FROM members) as pendingDues,
+        (SELECT SUM(amount) FROM transactions WHERE amount > 0 AND date LIKE ?) as monthlyCollection,
+        (SELECT SUM(ABS(amount)) FROM transactions WHERE amount < 0 AND date LIKE ?) as recentExpenses,
+        (SELECT SUM(amount) FROM transactions) as totalBalance
+      FROM DUAL
+    `, [currentMonthStr, currentMonthStr]);
 
-    // Recent Activity mapping
+    const stats = statsRows[0];
+
+    // Recent Activity mapping (Limited fetch)
+    const [recentTransactions] = await pool.query<RowDataPacket[]>('SELECT * FROM transactions ORDER BY date DESC LIMIT 5');
+    const [recentMembers] = await pool.query<RowDataPacket[]>('SELECT * FROM members ORDER BY joinedDate DESC LIMIT 3');
+    const [announcements] = await pool.query<RowDataPacket[]>('SELECT * FROM announcements ORDER BY date DESC LIMIT 5');
+    const [events] = await pool.query<RowDataPacket[]>('SELECT COUNT(*) as upcoming FROM events WHERE status = "published"');
+
     const recentActivity = [
-      ...transactions.slice(0, 5).map(t => ({
+      ...recentTransactions.map(t => ({
         id: t.id,
         title: Number(t.amount) > 0 ? 'Payment Received' : 'Expense Recorded',
         desc: Number(t.amount) > 0 ? `${t.name} paid ৳${t.amount}` : `${t.name}: ৳${Math.abs(Number(t.amount))}`,
         date: t.date
       })),
-      ...members.slice(-3).map(m => ({
+      ...recentMembers.map(m => ({
         id: m.id,
         title: 'New Member',
         desc: `${m.name} joined the association`,
@@ -119,47 +121,50 @@ apiRouter.get('/stats', async (req: AuthRequest, res: Response) => {
       }))
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
 
-    // Chart Data (Last 6 months)
+    // Chart Data (Last 6 months using SQL for each)
     const chartData = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
-      const month = d.toLocaleString('default', { month: 'short' });
+      const monthLabel = d.toLocaleString('default', { month: 'short' });
       const year = d.getFullYear();
-      const monthIdx = d.getMonth();
+      const monthIdx = (d.getMonth() + 1).toString().padStart(2, '0');
+      const searchStr = `${year}-${monthIdx}%`;
 
-      const collection = transactions
-        .filter(t => {
-          const td = new Date(t.date);
-          return Number(t.amount) > 0 && td.getMonth() === monthIdx && td.getFullYear() === year;
-        })
-        .reduce((acc, t) => acc + Number(t.amount), 0);
+      const [monthStats] = await pool.query<RowDataPacket[]>(`
+        SELECT 
+          SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) as collection,
+          SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END) as expenses
+        FROM transactions WHERE date LIKE ?
+      `, [searchStr]);
 
-      const expenses = Math.abs(transactions
-        .filter(t => {
-          const td = new Date(t.date);
-          return Number(t.amount) < 0 && td.getMonth() === monthIdx && td.getFullYear() === year;
-        })
-        .reduce((acc, t) => acc + Number(t.amount), 0));
-
-      chartData.push({ name: month, collection, expenses });
+      chartData.push({ 
+        name: monthLabel, 
+        collection: Number(monthStats[0].collection || 0), 
+        expenses: Number(monthStats[0].expenses || 0) 
+      });
     }
 
-    const totalBalance = transactions.reduce((acc, t) => acc + Number(t.amount), 0);
-
     res.json({
-      totalMembers, activeMembers, monthlyCollection, pendingDues,
-      upcomingEvents: events.filter(e => e.status === 'published').length,
-      recentExpenses, recentActivity, announcements, chartData, totalBalance
+      totalMembers: stats.totalMembers,
+      activeMembers: stats.activeMembers,
+      monthlyCollection: Number(stats.monthlyCollection || 0),
+      pendingDues: Number(stats.pendingDues || 0),
+      upcomingEvents: events[0].upcoming,
+      recentExpenses: Number(stats.recentExpenses || 0),
+      recentActivity,
+      announcements,
+      chartData,
+      totalBalance: Number(stats.totalBalance || 0)
     });
   } catch (error) {
-    console.error('[GEt /stats]', error);
+    console.error('[GET /stats]', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // --- Announcements API ---
-apiRouter.get('/announcements', async (req: Request, res: Response) => {
+apiRouter.get('/announcements', async (req: AuthRequest, res: Response) => {
   try {
     const { page, limit, offset } = getPagination(req);
     const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM announcements ORDER BY date DESC LIMIT ? OFFSET ?', [limit, offset]);
@@ -171,7 +176,7 @@ apiRouter.get('/announcements', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/announcements', async (req: Request, res: Response) => {
+apiRouter.post('/announcements', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { title, message, type } = req.body;
   const id = crypto.randomUUID();
   const date = new Date().toISOString();
@@ -187,10 +192,10 @@ apiRouter.post('/announcements', async (req: Request, res: Response) => {
 });
 
 // --- Members API ---
-apiRouter.get('/members', async (req: Request, res: Response) => {
+apiRouter.get('/members', isAdmin as any, async (req: AuthRequest, res: Response) => {
   try {
     const { page, limit, offset } = getPagination(req);
-    const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM members ORDER BY name ASC LIMIT ? OFFSET ?', [limit, offset]);
+    const [rows] = await pool.query<RowDataPacket[]>('SELECT id, name, membershipId, status, phone, email, dues, joinedDate FROM members ORDER BY name ASC LIMIT ? OFFSET ?', [limit, offset]);
     const [countRows] = await pool.query<RowDataPacket[]>('SELECT COUNT(*) as total FROM members');
     res.json({ data: rows, total: countRows[0].total, page, limit });
   } catch (error) {
@@ -199,15 +204,21 @@ apiRouter.get('/members', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.get('/members/:id/profile', async (req: Request, res: Response) => {
+apiRouter.get('/members/:id/profile', async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
+  
+  // RBAC + IDOR Protection
+  if (req.user?.role !== 'admin' && req.user?.id !== id) {
+    return res.status(403).json({ error: 'Forbidden: You can only view your own profile' });
+  }
+
   try {
-    const [memberRows] = await pool.query<RowDataPacket[]>('SELECT * FROM members WHERE id = ?', [id]);
+    const [memberRows] = await pool.query<RowDataPacket[]>('SELECT id, name, membershipId, status, phone, email, address, bloodGroup, dues, joinedDate FROM members WHERE id = ?', [id]);
     if (memberRows.length === 0) return res.status(404).json({ error: 'Member not found' });
     const member = memberRows[0];
 
     const [transactions] = await pool.query<RowDataPacket[]>('SELECT * FROM transactions WHERE memberId = ? ORDER BY date DESC', [id]);
-    const [files] = await pool.query<RowDataPacket[]>('SELECT * FROM files WHERE memberId = ? ORDER BY uploadDate DESC', [id]);
+    const [files] = await pool.query<RowDataPacket[]>('SELECT id, name, type, size, uploadDate FROM files WHERE memberId = ? ORDER BY uploadDate DESC', [id]);
 
     const totalDeposits = transactions.filter(t => t.type === 'Deposit').reduce((acc, t) => acc + Number(t.amount), 0);
 
@@ -218,7 +229,7 @@ apiRouter.get('/members/:id/profile', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/members', async (req: Request, res: Response) => {
+apiRouter.post('/members', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { name, phone, email, address, bloodGroup } = req.body;
   const id = crypto.randomUUID();
   
@@ -232,7 +243,7 @@ apiRouter.post('/members', async (req: Request, res: Response) => {
       [id, name, membershipId, 'active', phone, email, address, bloodGroup, 0, joinedDate]
     );
 
-    const [newMem] = await pool.query<RowDataPacket[]>('SELECT * FROM members WHERE id = ?', [id]);
+    const [newMem] = await pool.query<RowDataPacket[]>('SELECT id, name, membershipId FROM members WHERE id = ?', [id]);
     res.status(201).json(newMem[0]);
   } catch (error) {
     console.error(error);
@@ -240,7 +251,7 @@ apiRouter.post('/members', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.put('/members/:id', async (req: Request, res: Response) => {
+apiRouter.put('/members/:id', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { name, phone, status, dues, membershipId, joinedDate, email, address, bloodGroup } = req.body;
   try {
@@ -255,7 +266,7 @@ apiRouter.put('/members/:id', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.delete('/members/:id', async (req: Request, res: Response) => {
+apiRouter.delete('/members/:id', isAdmin as any, async (req: AuthRequest, res: Response) => {
   try {
     await pool.query('DELETE FROM members WHERE id = ?', [req.params.id]);
     res.json({ message: 'Member deleted' });
@@ -266,7 +277,14 @@ apiRouter.delete('/members/:id', async (req: Request, res: Response) => {
 });
 
 // --- File Upload ---
-apiRouter.post('/members/:id/files', upload.single('file'), async (req: Request, res: Response) => {
+apiRouter.post('/members/:id/files', upload.single('file'), async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  
+  // IDOR Protection
+  if (req.user?.role !== 'admin' && req.user?.id !== id) {
+    return res.status(403).json({ error: 'Forbidden: You can only upload files to your own profile' });
+  }
+
   const file = req.file;
   if (!file) return res.status(400).json({ error: 'No file uploaded' });
 
@@ -274,9 +292,9 @@ apiRouter.post('/members/:id/files', upload.single('file'), async (req: Request,
   try {
     await pool.query(
       'INSERT INTO files (id, memberId, name, type, size, path, uploadDate) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [fileId, req.params.id, file.originalname, file.mimetype, file.size, `/uploads/${file.filename}`, new Date().toISOString()]
+      [fileId, id, file.originalname, file.mimetype, file.size, `/uploads/${file.filename}`, new Date().toISOString()]
     );
-    const [newFile] = await pool.query<RowDataPacket[]>('SELECT * FROM files WHERE id = ?', [fileId]);
+    const [newFile] = await pool.query<RowDataPacket[]>('SELECT id, name, type, size, uploadDate FROM files WHERE id = ?', [fileId]);
     res.status(201).json(newFile[0]);
   } catch (error) {
     console.error(error);
@@ -285,7 +303,7 @@ apiRouter.post('/members/:id/files', upload.single('file'), async (req: Request,
 });
 
 // --- Transactions & Payments ---
-apiRouter.get('/transactions', async (req: Request, res: Response) => {
+apiRouter.get('/transactions', isAdmin as any, async (req: AuthRequest, res: Response) => {
   try {
     const { page, limit, offset } = getPagination(req);
     const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM transactions ORDER BY date DESC LIMIT ? OFFSET ?', [limit, offset]);
@@ -297,8 +315,10 @@ apiRouter.get('/transactions', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/payments', async (req: Request, res: Response) => {
+apiRouter.post('/payments', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { memberId, amount, method } = req.body;
+  if (!memberId || !amount) return res.status(400).json({ error: 'Missing required fields' });
+
   try {
     const [m] = await pool.query<RowDataPacket[]>('SELECT * FROM members WHERE id = ?', [memberId]);
     if (m.length === 0) return res.status(404).json({ error: 'Not found' });
@@ -306,7 +326,7 @@ apiRouter.post('/payments', async (req: Request, res: Response) => {
     const transactionId = crypto.randomUUID();
     await pool.query(
       'INSERT INTO transactions (id, memberId, name, type, amount, date, status, method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [transactionId, memberId, m[0].name, 'Deposit', Number(amount), new Date().toISOString(), 'completed', method]
+      [transactionId, memberId, m[0].name, 'Deposit', Number(amount), new Date().toISOString(), 'completed', method || 'Cash']
     );
 
     const newDues = Math.max(0, Number(m[0].dues) - Number(amount));
@@ -318,12 +338,14 @@ apiRouter.post('/payments', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/expenses', async (req: Request, res: Response) => {
+apiRouter.post('/expenses', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { name, amount, category, date, method } = req.body;
+  if (!name || !amount) return res.status(400).json({ error: 'Missing required fields' });
+
   try {
     await pool.query(
       'INSERT INTO transactions (id, memberId, name, type, amount, date, status, method) VALUES (?, null, ?, ?, ?, ?, ?, ?)',
-      [crypto.randomUUID(), name, category || 'Expense', -Math.abs(Number(amount)), date || new Date().toISOString(), 'completed', method]
+      [crypto.randomUUID(), name, category || 'Expense', -Math.abs(Number(amount)), date || new Date().toISOString(), 'completed', method || 'Cash']
     );
     res.status(201).json({ success: true });
   } catch (error) {
@@ -333,7 +355,7 @@ apiRouter.post('/expenses', async (req: Request, res: Response) => {
 });
 
 // --- Events ---
-apiRouter.get('/events', async (req: Request, res: Response) => {
+apiRouter.get('/events', async (req: AuthRequest, res: Response) => {
   try {
     const { page, limit, offset } = getPagination(req);
     const [rows] = await pool.query<RowDataPacket[]>('SELECT * FROM events ORDER BY date DESC LIMIT ? OFFSET ?', [limit, offset]);
@@ -345,12 +367,14 @@ apiRouter.get('/events', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/events', async (req: Request, res: Response) => {
+apiRouter.post('/events', isAdmin as any, async (req: AuthRequest, res: Response) => {
   const { title, date, location, description } = req.body;
+  if (!title || !date) return res.status(400).json({ error: 'Missing required fields' });
+
   try {
     await pool.query(
       'INSERT INTO events (id, title, date, location, attendees, status, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [crypto.randomUUID(), title, date, location, 0, 'published', description]
+      [crypto.randomUUID(), title, date, location || 'TBD', 0, 'published', description || '']
     );
     res.status(201).json({ success: true });
   } catch (error) {

@@ -51,16 +51,23 @@ export function MemberProfile({
   const fetchProfile = async () => {
     try {
       const res = await fetch(`/api/members/${memberId}/profile`);
+      if (!res.ok) {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
       setProfile(data);
-      setEditForm({
-        name: data.member.name,
-        phone: data.member.phone,
-        status: data.member.status,
-        dues: data.member.dues,
-        membershipId: data.member.membershipId,
-        joinedDate: data.member.joinedDate || ''
-      });
+      if (data.member) {
+        setEditForm({
+          name: data.member.name,
+          phone: data.member.phone,
+          status: data.member.status,
+          dues: data.member.dues,
+          membershipId: data.member.membershipId,
+          joinedDate: data.member.joinedDate || ''
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch profile', error);
     } finally {
@@ -156,7 +163,7 @@ export function MemberProfile({
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Clock className="animate-spin text-emerald-600" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Clock className="animate-spin text-indigo-600" /></div>;
   if (!profile) return <div>Member not found</div>;
 
   const filteredTransactions = profile.transactions
@@ -186,7 +193,7 @@ export function MemberProfile({
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <button 
             onClick={onRecordPayment}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
           >
             <Wallet size={16} /> Record Payment
           </button>
@@ -196,7 +203,7 @@ export function MemberProfile({
                 onClick={handleToggleStatus}
                 className={cn(
                   "flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                  profile.member.status === 'active' ? "bg-amber-50 text-amber-600 hover:bg-amber-100" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                  profile.member.status === 'active' ? "bg-amber-50 text-amber-600 hover:bg-amber-100" : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
                 )}
               >
                 {profile.member.status === 'active' ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
@@ -227,7 +234,7 @@ export function MemberProfile({
         {/* Horizontal Header Card */}
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row items-center gap-8">
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center text-2xl font-bold text-emerald-700 shrink-0">
+            <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center text-2xl font-bold text-indigo-700 shrink-0">
               {profile.member.name.split(' ').map((n: string) => n[0]).join('')}
             </div>
             <div>
@@ -235,7 +242,7 @@ export function MemberProfile({
               <p className="text-sm text-gray-500 font-mono">{profile.member.membershipId}</p>
               <span className={cn(
                 "mt-2 inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                profile.member.status === 'active' ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"
+                profile.member.status === 'active' ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-600"
               )}>
                 {profile.member.status}
               </span>
@@ -259,19 +266,19 @@ export function MemberProfile({
             <div className="border-b border-gray-100 flex">
               <button 
                 onClick={() => setActiveSubTab('overview')}
-                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'overview' ? "border-emerald-600 text-emerald-600" : "border-transparent text-gray-500 hover:text-gray-900")}
+                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'overview' ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-900")}
               >
                 Overview
               </button>
               <button 
                 onClick={() => setActiveSubTab('deposits')}
-                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'deposits' ? "border-emerald-600 text-emerald-600" : "border-transparent text-gray-500 hover:text-gray-900")}
+                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'deposits' ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-900")}
               >
                 Deposit History
               </button>
               <button 
                 onClick={() => setActiveSubTab('files')}
-                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'files' ? "border-emerald-600 text-emerald-600" : "border-transparent text-gray-500 hover:text-gray-900")}
+                className={cn("px-6 py-4 text-sm font-bold border-b-2 transition-colors", activeSubTab === 'files' ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-900")}
               >
                 Files
               </button>
@@ -281,9 +288,9 @@ export function MemberProfile({
               {activeSubTab === 'overview' && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
-                      <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Total Deposits</p>
-                      <p className="text-xl font-bold text-emerald-700">{formatCurrency(profile.totalDeposits)}</p>
+                    <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                      <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-1">Total Deposits</p>
+                      <p className="text-xl font-bold text-indigo-700">{formatCurrency(profile.totalDeposits)}</p>
                     </div>
                     <div className="p-4 bg-red-50 rounded-lg border border-red-100">
                       <p className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">Amount Due</p>
@@ -312,7 +319,7 @@ export function MemberProfile({
                       {profile.transactions.slice(0, 3).map((t: any) => (
                         <div key={t.id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
                               <Wallet size={16} />
                             </div>
                             <div>
@@ -320,7 +327,7 @@ export function MemberProfile({
                               <p className="text-[10px] text-gray-500">{new Date(t.date).toLocaleDateString()}</p>
                             </div>
                           </div>
-                          <p className="text-sm font-bold text-emerald-600">+{formatCurrency(t.amount)}</p>
+                          <p className="text-sm font-bold text-indigo-600">+{formatCurrency(t.amount)}</p>
                         </div>
                       ))}
                     </div>
@@ -335,7 +342,7 @@ export function MemberProfile({
                       <select 
                         value={filterMonth}
                         onChange={(e) => setFilterMonth(e.target.value)}
-                        className="text-xs font-semibold border border-gray-200 rounded-lg px-3 py-1.5 bg-white outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="text-xs font-semibold border border-gray-200 rounded-lg px-3 py-1.5 bg-white outline-none focus:ring-2 focus:ring-indigo-500/20"
                       >
                         <option value="all">All Months</option>
                         {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((m, i) => (
@@ -362,11 +369,11 @@ export function MemberProfile({
                             <td className="py-3 pr-4 font-medium">{new Date(t.date).toLocaleDateString()}</td>
                             <td className="py-3 px-4 text-gray-500">{t.method || 'Cash'}</td>
                             <td className="py-3 px-4">
-                              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full">
+                              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full">
                                 {t.status}
                               </span>
                             </td>
-                            <td className="py-3 pl-4 text-right font-bold text-emerald-600">
+                            <td className="py-3 pl-4 text-right font-bold text-indigo-600">
                               {formatCurrency(t.amount)}
                             </td>
                           </tr>
@@ -381,7 +388,7 @@ export function MemberProfile({
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h5 className="text-sm font-bold">Documents & Files</h5>
-                    <label className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 cursor-pointer transition-colors">
+                    <label className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 cursor-pointer transition-colors">
                       <Upload size={16} />
                       <span>{uploading ? 'Uploading...' : 'Upload File'}</span>
                       <input type="file" className="hidden" onChange={handleFileUpload} disabled={uploading} />
@@ -397,9 +404,9 @@ export function MemberProfile({
                       </div>
                     ) : (
                       profile.files.map((file: any) => (
-                        <div key={file.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group">
+                        <div key={file.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gray-100 text-gray-500 rounded-lg group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
+                            <div className="p-2 bg-gray-100 text-gray-500 rounded-lg group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
                               <FileText size={20} />
                             </div>
                             <div className="min-w-0">
@@ -412,7 +419,7 @@ export function MemberProfile({
                               href={file.path} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="p-2 text-gray-400 hover:text-emerald-600 transition-colors"
+                              className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
                             >
                               <Download size={16} />
                             </a>
@@ -451,7 +458,7 @@ export function MemberProfile({
                     required
                     value={editForm.name}
                     onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -462,7 +469,7 @@ export function MemberProfile({
                       required
                       value={editForm.phone}
                       onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     />
                   </div>
                   <div>
@@ -472,7 +479,7 @@ export function MemberProfile({
                       required
                       value={editForm.membershipId}
                       onChange={(e) => setEditForm({...editForm, membershipId: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -483,7 +490,7 @@ export function MemberProfile({
                     required
                     value={editForm.joinedDate}
                     onChange={(e) => setEditForm({...editForm, joinedDate: e.target.value})}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -492,7 +499,7 @@ export function MemberProfile({
                     <select 
                       value={editForm.status}
                       onChange={(e) => setEditForm({...editForm, status: e.target.value})}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -505,7 +512,7 @@ export function MemberProfile({
                       required
                       value={editForm.dues}
                       onChange={(e) => setEditForm({...editForm, dues: Number(e.target.value)})}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -519,7 +526,7 @@ export function MemberProfile({
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all active:scale-95"
+                    className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
                   >
                     Save Changes
                   </button>

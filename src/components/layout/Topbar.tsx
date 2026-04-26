@@ -24,7 +24,7 @@ export function Topbar({ activeTab, onMenuClick }: TopbarProps) {
           <input 
             type="text" 
             placeholder="Search anything..." 
-            className="pl-10 pr-4 py-2 bg-gray-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 w-48 lg:w-64 transition-all"
+            className="pl-10 pr-4 py-2 bg-gray-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 w-48 lg:w-64 transition-all"
           />
         </div>
         <button className="relative text-gray-500 hover:text-gray-900 transition-colors p-2">

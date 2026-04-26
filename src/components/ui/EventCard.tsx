@@ -3,6 +3,7 @@ import { Calendar, TrendingUp, MoreVertical } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface EventCardProps {
+  key?: string;
   title: string;
   date: string;
   location: string;
@@ -16,7 +17,7 @@ export function EventCard({ title, date, location, attendees, status }: EventCar
       <div className="flex justify-between items-start mb-4">
         <span className={cn(
           "px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider",
-          status === 'published' ? "bg-emerald-100 text-emerald-700" : 
+          status === 'published' ? "bg-indigo-100 text-indigo-700" : 
           status === 'cancelled' ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-600"
         )}>
           {status}
@@ -41,11 +42,11 @@ export function EventCard({ title, date, location, attendees, status }: EventCar
               U{i}
             </div>
           ))}
-          <div className="w-6 h-6 rounded-full border-2 border-white bg-emerald-50 text-emerald-600 flex items-center justify-center text-[8px] font-bold">
+          <div className="w-6 h-6 rounded-full border-2 border-white bg-indigo-50 text-indigo-600 flex items-center justify-center text-[8px] font-bold">
             +{attendees}
           </div>
         </div>
-        <button className="text-xs font-bold text-emerald-600 hover:underline">View Details</button>
+        <button className="text-xs font-bold text-indigo-600 hover:underline">View Details</button>
       </div>
     </div>
   );

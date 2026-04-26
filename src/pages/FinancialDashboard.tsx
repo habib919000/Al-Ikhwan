@@ -49,7 +49,7 @@ export function FinancialDashboard({
       label,
       value: totalMtdExpenses > 0 ? Math.round((amount / totalMtdExpenses) * 100) : 0,
       color: label === 'Maintenance' ? 'bg-blue-500' : 
-             label === 'Security' ? 'bg-emerald-500' : 
+             label === 'Security' ? 'bg-indigo-500' : 
              label === 'Utilities' ? 'bg-amber-500' : 
              label === 'Salary' ? 'bg-purple-500' : 'bg-gray-400'
     }))
@@ -68,7 +68,7 @@ export function FinancialDashboard({
           </button>
           <button 
             onClick={onRecordPayment} 
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
           >
             <Plus size={16} /> Record Payment
           </button>
@@ -89,7 +89,7 @@ export function FinancialDashboard({
                 </button>
                 <button 
                   onClick={() => setFilter('income')}
-                  className={cn("px-3 py-1 text-xs font-medium rounded-md transition-all", filter === 'income' ? "bg-white text-emerald-600 shadow-sm" : "text-gray-500 hover:text-gray-700")}
+                  className={cn("px-3 py-1 text-xs font-medium rounded-md transition-all", filter === 'income' ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500 hover:text-gray-700")}
                 >
                   Income
                 </button>
@@ -112,7 +112,7 @@ export function FinancialDashboard({
                     type={t.type} 
                     amount={t.amount} 
                     date={new Date(t.date).toLocaleDateString()} 
-                    status={t.status} 
+                    status={t.status as any} 
                   />
                 ))
               )}
@@ -128,7 +128,7 @@ export function FinancialDashboard({
               <div className="flex justify-between text-xs">
                 <div>
                   <p className="text-gray-400 mb-1">Income (MTD)</p>
-                  <p className="font-bold text-emerald-400">+{formatCurrency(stats?.monthlyCollection || 0)}</p>
+                  <p className="font-bold text-indigo-400">+{formatCurrency(stats?.monthlyCollection || 0)}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 mb-1">Expenses (MTD)</p>
@@ -136,7 +136,7 @@ export function FinancialDashboard({
                 </div>
               </div>
             </div>
-            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
+            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl" />
           </div>
           
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -146,7 +146,7 @@ export function FinancialDashboard({
                 <p className="text-xs text-gray-500 text-center py-4">No expenses recorded this month.</p>
               ) : (
                 categories.map(cat => (
-                  <CategoryProgress key={cat.label} label={cat.label} value={cat.value} color={cat.color} />
+                  <CategoryProgress label={cat.label} value={cat.value} color={cat.color} />
                 ))
               )}
             </div>

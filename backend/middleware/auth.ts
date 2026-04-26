@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_super_secret_dev_key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET is required in production');
+}
+const ACTUAL_SECRET = JWT_SECRET || 'fallback_super_secret_dev_key';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -22,7 +26,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, ACTUAL_SECRET) as any;
     req.user = decoded;
     next();
   } catch (error) {

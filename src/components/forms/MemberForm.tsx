@@ -40,7 +40,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
           type="text" 
           value={formData.name}
           onChange={e => setFormData({ ...formData, name: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="e.g. Zaid Ali"
         />
       </div>
@@ -52,7 +52,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
             type="tel" 
             value={formData.phone}
             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             placeholder="+91 98765 43210"
           />
         </div>
@@ -62,7 +62,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
             type="email" 
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
             placeholder="zaid@example.com"
           />
         </div>
@@ -72,7 +72,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
         <select 
           value={formData.bloodGroup}
           onChange={e => setFormData({ ...formData, bloodGroup: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
         >
           <option value="">Select Blood Group</option>
           {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
@@ -86,7 +86,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
           required
           value={formData.address}
           onChange={e => setFormData({ ...formData, address: e.target.value })}
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           rows={3}
           placeholder="House No, Street, Area..."
         />
@@ -94,7 +94,7 @@ export function MemberForm({ onSuccess }: MemberFormProps) {
       <button 
         disabled={submitting}
         type="submit" 
-        className="w-full py-3 bg-emerald-600 text-white rounded-lg font-bold text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+        className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
       >
         {submitting ? 'Adding...' : 'Add Member'}
       </button>
